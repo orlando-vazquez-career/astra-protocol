@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Construir el protocolo ASTRA (repo `astra-protocol`), su herramienta `astra` (repo `astra-cli`, CLI + servidor MCP), publicarlos como repos públicos en GitHub y enseñar a KAIROS a enrutar hacia ASTRA sin que ASTRA sepa de KAIROS.
+**Goal:** Construir el protocolo ASTRA (repo `astra-protocol`), su herramienta `astra` (repo `astra-cli`, CLI + servidor MCP), publicarlos como repos públicos en GitHub. La integración con cualquier sistema superior que quiera enrutar hacia ASTRA vive en el repo de ese sistema: ASTRA no lo conoce.
 
-**Architecture:** Dos repos independientes. `astra-cli` es un paquete Node ≥ 20, ESM, cero dependencias, con un módulo por responsabilidad en `lib/` y datos en `data/` (registro de cadenas y catálogo de estándares); el CLI y el servidor MCP son dos fachadas sobre las mismas funciones. `astra-protocol` es Markdown: protocolo, guías, plantillas, skills canónicas en `skills/` y copias generadas por `astra skills sync`. KAIROS recibe una fila de routing, el enum `astra` y el directorio hermano; nada de ASTRA apunta a KAIROS.
+**Architecture:** Dos repos independientes. `astra-cli` es un paquete Node ≥ 20, ESM, cero dependencias, con un módulo por responsabilidad en `lib/` y datos en `data/` (registro de cadenas y catálogo de estándares); el CLI y el servidor MCP son dos fachadas sobre las mismas funciones. `astra-protocol` es Markdown: protocolo, guías, plantillas, skills canónicas en `skills/` y copias generadas por `astra skills sync`.
 
 **Tech Stack:** Node 22 (compatible 20), `node --test`, `node:crypto` (sha256), `fetch` nativo, Git, GitHub CLI (`gh`), GitHub Actions. Sin npm install en ningún momento.
 
@@ -16,7 +16,7 @@
 - Windows, macOS y Linux: nunca hardcodear `/` ni `\\`; usar `node:path`; ejecutables buscados con `PATHEXT`; `.cmd/.bat` se lanzan con `shell: true`; escritura atómica con `rename` y reintentos ante `EPERM/EBUSY/EACCES`.
 - Cualquier vendor de IA: entrypoints `AGENTS.md` (canónico), `CLAUDE.md` (importa `@AGENTS.md`), `GEMINI.md`; skills en `skills/<nombre>/SKILL.md`; tiers `primary`/`secondary`, nunca IDs de modelo de un vendor.
 - Cadenas de génesis: `stellar-mainnet`, `stellar-testnet`, `base`, `base-sepolia`, `syscoin-nevm`, `syscoin-tanenbaum`, `rollux`, `rollux-tanenbaum`, `syscoin-utxo`.
-- ASTRA **no menciona** KAIROS, SEELE, MNEMA, PEITHO ni LUMEN. Puede nombrar "un protocolo general de software (por ejemplo AEGIS)" solo en `guides/skills-externas.md` y en la spec.
+- ASTRA **no menciona** ningún otro protocolo, sistema de memoria ni daemon. Puede nombrar "un protocolo general de software (por ejemplo AEGIS)" solo en `guides/skills-externas.md` y en la spec.
 - Nada de secretos ni datos personales en ningún archivo: `astra check` debe pasar en ambos repos antes de cada push. Los tests construyen secretos de prueba en runtime (nunca literales).
 - Idioma: español latino neutro, sin voseo, en docs y mensajes del CLI. Identificadores de código en inglés.
 - Licencia MIT, `Copyright (c) 2026 DevZen SpA`. Commits con prefijos `feat:`, `docs:`, `test:`, `chore:` y cuerpo en español.
@@ -54,10 +54,6 @@
 ### `C:/dev/protocols/ASTRA` (repo `astra-protocol`)
 
 `ASTRA-PROTOCOL.md`, `README.md`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `LICENSE`, `.gitignore`, `.gitattributes`, `skills/<9>/SKILL.md`, `.claude/skills/*` y `.agents/skills/*` (generados), `templates/{orbit,chart,audit,launch,devlog}.template.md`, `templates/deployments.schema.json`, `templates/agents/<5>.md`, `guides/{gates,keys-and-secrets,audit-checklist,standards-map,agentic-payments,runtimes,skills-externas}.md`, `guides/chains/{stellar,syscoin,base,evm-generico}.md`, `docs/GLOSSARY.md`, `docs/MAPA.md`, `docs/superpowers/{specs,plans}/…`, `genesis/README.md`, `genesis/devlogs/2026-09-04-genesis.md`.
-
-### `C:/dev/protocols/KAIROS` (modificaciones)
-
-`daemon/kairos-daimonion.mjs:265`, `daemon/test/kairos-daimonion.test.mjs` (test nuevo), `guides/routing-matrix.md`, `KAIROS-PROTOCOL.md` (cabecera, §hueco, diagrama, TL;DR, Fase 2, Fase 3 enum, §Relación, §Referencias, version history), `.claude/commands/kairos.md`, `.kimi-code/skills/kairos/SKILL.md`, `templates/wager.template.md`, `templates/proposal.template.md`, `observatory/index.html`, `observatory/cosmografia.html`, `CLAUDE.md`, `README.md`, `guides/observatory.md`, `docs/devlogs/2026-09-04-astra-hermano.md`.
 
 ---
 
@@ -1188,7 +1184,7 @@ jobs:
 
 ### Task 17: verificacion cruzada y publicacion en GitHub
 
-- [ ] **Step 1: escaneo** — `node C:/dev/tools/astra-cli/bin/astra.mjs check` dentro de `C:/dev/tools/astra-cli` y de `C:/dev/protocols/ASTRA` → ambos OK. `grep -ri "kairos\|seele\|mnema\|peitho\|lumen" C:/dev/protocols/ASTRA C:/dev/tools/astra-cli --exclude-dir=.git -l` → solo `docs/superpowers/**` (spec y plan) y `guides/skills-externas.md` pueden mencionar AEGIS/LUMEN; **ninguno** puede mencionar KAIROS ni SEELE salvo la spec y este plan. Si aparece otro, corregir antes de publicar. `grep -rE "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}"` → sin correos personales.
+- [ ] **Step 1: escaneo** — `node C:/dev/tools/astra-cli/bin/astra.mjs check` dentro de `C:/dev/tools/astra-cli` y de `C:/dev/protocols/ASTRA` → ambos OK. buscar nombres de otros protocolos, memorias o daemons en los dos repos: solo `guides/skills-externas.md` y la spec pueden nombrar un protocolo general de software (AEGIS) como ejemplo. Si aparece otro, corregir antes de publicar. `grep -rE "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}"` → sin correos personales.
 - [ ] **Step 2: `node --test test/`** en `astra-cli` → todo verde.
 - [ ] **Step 3: publicar** (autorizado explicitamente por el operador):
 
@@ -1203,52 +1199,21 @@ gh repo edit orlando-vazquez-career/astra-cli --add-topic web3 --add-topic stell
 
 ---
 
-### Task 18: KAIROS enruta a ASTRA (KAIROS → ASTRA, nunca al reves)
+### Task 18: integración con sistemas superiores
 
-**Files:**
-- Modify: `C:/dev/protocols/KAIROS/daemon/kairos-daimonion.mjs:265` (lista de protocolos), `daemon/test/kairos-daimonion.test.mjs` (test nuevo al final), `guides/routing-matrix.md`, `KAIROS-PROTOCOL.md`, `.claude/commands/kairos.md`, `.kimi-code/skills/kairos/SKILL.md`, `templates/wager.template.md`, `templates/proposal.template.md`, `observatory/index.html`, `observatory/cosmografia.html`, `CLAUDE.md`, `README.md`, `guides/observatory.md`
-- Create: `docs/devlogs/2026-09-04-astra-hermano.md`
-
-- [ ] **Step 1: test primero** (agregar al final de `daemon/test/kairos-daimonion.test.mjs`):
-
-```js
-test('ASTRA es hermano conocido: PROTOCOL_DIRS y contextOfWager lo resuelven al directorio hermano', async () => {
-  const { PROTOCOL_DIRS, contextOfWager } = await import('../kairos-daimonion.mjs');
-  assert.equal(PROTOCOL_DIRS.astra, path.resolve(REPO, '..', 'ASTRA'));
-  assert.deepEqual(contextOfWager({ source_protocol: 'astra' }),
-    { protocol: 'astra', project: 'astra', directory: path.resolve(REPO, '..', 'ASTRA') });
-});
-```
-
-  Correr `node --test daemon/test/kairos-daimonion.test.mjs` → falla (`PROTOCOL_DIRS.astra` undefined).
-
-- [ ] **Step 2: `kairos-daimonion.mjs`** — cambiar `['mnema', 'lumen', 'aegis', 'peitho', 'kairos']` por `['mnema', 'lumen', 'aegis', 'peitho', 'astra', 'kairos']` y el comentario "los cinco protocolos hermanos" → "los protocolos hermanos". Test → PASS. Correr la suite completa `node --test "daemon/test/*.test.mjs"` → 182 pass.
-
-- [ ] **Step 3: docs de routing**
-  - `guides/routing-matrix.md`: fila nueva despues de PEITHO: `| Contrato, token, dApp con firma, deploy a testnet/mainnet, pagos on-chain (x402/MPP), ZK on-chain — Stellar, Syscoin, Base o cualquier EVM | **ASTRA** | Siete fases con dos gates (Carta, Mainnet). Herramientas: \`astra doctor\`, \`astra check --gate mainnet\`, MCP \`astra mcp\`. Protocolo en \`C:/dev/protocols/ASTRA\`. |` y en anti-patrones: "Rutear un deploy a mainnet como si fuera AEGIS — mainnet es irreversible; va a ASTRA con su Gate 2".
-  - `KAIROS-PROTOCOL.md`: version `0.5.0`, cabecera `**ASTRA hermano**: 2026-09-04`, `**Hermano de**` agrega `[ASTRA](../ASTRA/ASTRA-PROTOCOL.md) v0.1.0`; §hueco: lista agrega `- **ASTRA** construye en cadena (contratos, tokens, dApps → testnet → mainnet).` y "cuatro protocolos que producen" → "cinco"; diagrama: agregar `ASTRA` a la fila `MNEMA   LUMEN   AEGIS  PEITHO  ASTRA`; TL;DR: `[MNEMA | LUMEN | AEGIS | PEITHO | ASTRA hacen su trabajo]`; Fase 2 tabla: fila ASTRA (misma señal que la matriz); Fase 3 enum: `"mnema" | "lumen" | "aegis" | "peitho" | "astra" | "kairos"`; §Relacion: fila `| **ASTRA** | ¿Que desplegamos en cadena? | ¿El contrato sobrevivio a mainnet sin incidente ni redeploy? (los wagers de ASTRA nacen en Gate 2: fecha de resolucion = 30 dias post-lanzamiento) |` y "Los cinco hermanos" → "Los seis hermanos"; §Referencias: `- ASTRA-PROTOCOL.md — ../ASTRA/ASTRA-PROTOCOL.md (repo publico github.com/orlando-vazquez-career/astra-protocol).`; Version history: `| 0.5.0 | 2026-09-04 | Los sprints Web3 (contratos, tokens, deploys a mainnet) se ruteaban a AEGIS, cuyo gate de release supone reversibilidad. Nace ASTRA (v0.1.0), protocolo exclusivo de desarrollo Web3, independiente y multi-vendor. | **ASTRA reconocido como hermano.** Fila en la matriz de enrutamiento, enum \`source_protocol\` con \`astra\`, directorio hermano en el Daimonion, planeta en la cosmografia, comando \`/kairos astra\`. La relacion es unidireccional: KAIROS enruta a ASTRA; ASTRA no conoce a KAIROS. |`.
-  - `.claude/commands/kairos.md`: `argument-hint` → `mnema|lumen|aegis|peitho|astra|seele`; `allowed-tools` agrega `Bash(astra:*)`; linea 7 lista `(MNEMA · LUMEN · AEGIS · PEITHO · ASTRA · SEELE)`; "Si el argumento es un protocolo (`mnema|lumen|aegis|peitho|astra|seele`)"; en el resumen post-boot `(¿MNEMA? ¿LUMEN? ¿AEGIS? ¿PEITHO? ¿ASTRA? ¿esperar? ¿ninguno?)`; seccion nueva antes de las reglas de la membrana: `## Protocolo ASTRA y herramienta \`astra\` (desarrollo Web3)` con: cuando rutear (señales), lectura de `C:/dev/protocols/ASTRA/ASTRA-PROTOCOL.md`, comandos `node C:/dev/tools/astra-cli/bin/astra.mjs doctor|check --gate mainnet|deployments list|chain probe <id>`, MCP `astra` si esta registrado, regla de wager (al firmar Gate 2 se registra un wager `source_protocol: "astra"` con `resolve_by` 30 dias despues), y la frase "KAIROS referencia a ASTRA; ASTRA no referencia a KAIROS: nunca escribir en su repo cosas de la membrana".
-  - `.kimi-code/skills/kairos/SKILL.md`: `whenToUse` agrega `astra`.
-  - `templates/wager.template.md`: `<mnema | lumen | aegis | peitho | astra | kairos>`; `templates/proposal.template.md`: `ruta_sugerida ∈ {mnema|lumen|aegis|peitho|astra|esperar|ninguno}`.
-- [ ] **Step 4: Observatory**
-  - `index.html`: variable `--star: #f0c674;   /* astra — los astros */` junto a las otras; `.tag.astra{color:var(--star);background:rgba(240,198,116,.12)}`; `<option value="astra">astra</option>`; `PROTO = ['mnema','lumen','aegis','kairos','peitho','astra']`; `PCOLOR` agrega `astra:'var(--star)'`; `PROTOCOL_DIRS` agrega `astra:'C:/dev/protocols/ASTRA'`.
-  - `cosmografia.html`: `COL.astra:'#f0c674'`; `PROTOCOLS.astra:{name:'ASTRA',color:COL.astra,orbit:0.78,speed:0.038,size:14,glyph:'✦',phase0:4.9, desc:'Desarrollo Web3 · siete fases, dos gates: Carta y Mainnet · multi-cadena, multi-vendor'}`; `ORDER=['mnema','lumen','aegis','peitho','astra','seele']`; `cityPhases` agrega `astra:['Órbita','Carta','Ensayo','Auditoría','Lanzamiento']`; comentario "5 planetas" → "6 planetas (… PEITHO, ASTRA y SEELE)".
-  - Abrir `observatory/index.html` y `cosmografia.html` con `node daemon/static-server.mjs` no es necesario: validar sintaxis con `node --check` no aplica a HTML; validar con `node -e` que el JSON de `PROTOCOL_DIRS` copiado es parseable no aplica. Verificacion manual: buscar que no quede ningun `['mnema','lumen','aegis','peitho'` sin astra (`grep -n "peitho'" observatory/*.html`).
-- [ ] **Step 5: `CLAUDE.md`** linea de hermanos: `- \`../MNEMA\` \`../LUMEN\` \`../AEGIS\` \`../PEITHO\` \`../ASTRA\` — protocolos hermanos … ASTRA (v0.1.0, publico) es el hermano Web3: contratos, tokens, dApps, deploys a testnet/mainnet en Stellar, Syscoin, Base y cualquier EVM; su CLI vive en \`C:/dev/tools/astra-cli\` (\`astra\`, cero dependencias, tambien MCP). La referencia es unidireccional: KAIROS → ASTRA.`; linea de tools agrega `astra-cli`. `README.md`: "MNEMA decide, LUMEN diseña, AEGIS construye, PEITHO vende, ASTRA despliega en cadena, SEELE recuerda. Los seis…"; cosmografia: "MNEMA, LUMEN, AEGIS, PEITHO, ASTRA y SEELE son planetas". `guides/observatory.md` linea 22 igual.
-- [ ] **Step 6: devlog** `docs/devlogs/2026-09-04-astra-hermano.md`: por que, que cambio (lista de archivos), la regla de direccion unica, como probar (`/kairos astra`, `node --test`), pendientes (el `/kairos` global en `~/.claude/commands/kairos.md` sigue desactualizado; decidir si se sincroniza).
-- [ ] **Step 7: tests y commit** — `node --test "daemon/test/*.test.mjs"` → 182 pass. Commit **solo** los archivos tocados por esta tarea que estaban limpios (excluir `.claude/commands/kairos.md`, que ya tenia cambios sin commitear del operador, y `genesis/devlogs/kairos.jsonl`): `git add daemon/kairos-daimonion.mjs daemon/test/kairos-daimonion.test.mjs guides/routing-matrix.md KAIROS-PROTOCOL.md .kimi-code/skills/kairos/SKILL.md templates/wager.template.md templates/proposal.template.md observatory/index.html observatory/cosmografia.html CLAUDE.md README.md guides/observatory.md docs/devlogs/2026-09-04-astra-hermano.md && git commit -m "feat(routing): ASTRA reconocido como hermano (v0.5.0) — matriz, enum, daimonion, cosmografia; KAIROS → ASTRA, nunca al reves"`. No pushear KAIROS (no fue pedido). Dejar `.claude/commands/kairos.md` modificado en el working tree y reportarlo.
+Fuera de este repo. Un sistema que quiera enrutar trabajo hacia ASTRA (una capa de orquestación, un asistente, un pipeline) lo hace leyendo `ASTRA-PROTOCOL.md` y llamando al CLI o al MCP; su integración se documenta y se prueba en el repo de ese sistema. ASTRA no lo conoce y no lo necesita para cerrar un sprint (spec §3, "Independiente").
 
 ---
 
 ### Task 19: cierre
 
 - [ ] **Step 1: memoria** — actualizar `C:/Users/Orlando/.claude/projects/C--dev-hackathons-stellar-elite-09-2026-clases/memory/` con un archivo `project-astra-protocol.md` (que es ASTRA, repos, decisiones, pendientes) y una linea en `MEMORY.md`.
-- [ ] **Step 2: reporte al operador** (español): revision de AEGIS/KAIROS/LUMEN y tools (hallazgos concretos), mapa de las 34 skills → protocolo, justificacion de ASTRA, que se construyo, URLs de los dos repos, estado de CI, cambios en KAIROS (y lo que quedo sin commitear), pendientes y decisiones que le tocan.
+- [ ] **Step 2: reporte al operador** (español): revision de los protocolos existentes y sus tools, mapa de las 34 skills → protocolo, justificacion de ASTRA, que se construyo, URLs de los dos repos, estado de CI, pendientes y decisiones que le tocan.
 
 ---
 
 ## Self-review
 
-- **Cobertura de la spec**: §1–§3 → Tasks 13, 17 (independencia y escaneo), §4.1–4.3 → Tasks 13, 15, 16; §4.4 → Tasks 2, 14; §4.5 → Tasks 10, 11, 13, 14 (`runtimes.md`); §5 → Tasks 1–11; §6 → tests en cada task + Task 12 (CI); §7 → mapa de archivos; §8 → Task 14 (`skills-externas.md`) y Task 19; §9 → Task 13 (no-objetivos). KAIROS → Task 18. Publicacion → Task 17.
+- **Cobertura de la spec**: §1–§3 → Tasks 13, 17 (independencia y escaneo), §4.1–4.3 → Tasks 13, 15, 16; §4.4 → Tasks 2, 14; §4.5 → Tasks 10, 11, 13, 14 (`runtimes.md`); §5 → Tasks 1–11; §6 → tests en cada task + Task 12 (CI); §7 → mapa de archivos; §8 → Task 14 (`skills-externas.md`) y Task 19; §9 → Task 13 (no-objetivos). Integracion externa → Task 18 (fuera de este repo). Publicacion → Task 17.
 - **Placeholders**: ninguno; las guias y skills tienen su contenido enumerado; los datos de cadenas y estandares estan tabulados con valores verificados.
 - **Consistencia de nombres**: `validateAddress` (Tasks 3, 6, 7, 9), `resolveFamily`/`getChain` (Tasks 2–7), `syncSkills` (Tasks 10, 11, 16), `resolveProtocolDir` (Tasks 10, 11), `checkRepo` (Tasks 7, 9), `addDeployment`/`readDeployments` (Tasks 6, 9), `fechaLocalISO`/`writeAtomic`/`findExecutable`/`runVersion` (Task 1 y consumidores). Comandos en `lib/commands/*.mjs` con `run({args, flags, stdout, stderr})`.

@@ -13,7 +13,7 @@
 5. **Estándares con gobernanza propia**: SEP/CAP en Stellar, ERC/EIP en EVM, docs de Syscoin/Rollux. Usar el estándar antes que inventar.
 6. **Auditoría específica**: reentrancy, control de acceso, aritmética, oráculos, TTL de storage en Soroban, upgradeabilidad, front-running. Con auditor distinto del autor.
 
-Estas seis cosas no encajan en las fases de un protocolo general (donde el deploy es reversible y el secreto es un `.env`), ni en un protocolo de diseño, ni en una membrana de routing. Por eso ASTRA existe como protocolo **exclusivo** de Web3 e **independiente**: no depende de ningún otro protocolo ni de ninguna capa de orquestación para funcionar.
+Estas seis cosas no encajan en las fases de un protocolo general (donde el deploy es reversible y el secreto es un `.env`), ni en un protocolo de diseño, ni en una capa de enrutamiento. Por eso ASTRA existe como protocolo **exclusivo** de Web3 e **independiente**: no depende de ningún otro protocolo ni de ninguna capa de orquestación para funcionar.
 
 ## 2. Nombre y forma
 
@@ -144,7 +144,7 @@ Las 34 skills de `stellar-build` se reparten así (no se copian a ASTRA: licenci
 
 - **ASTRA** (Web3): `smart-contracts`, `dapp`, `assets`, `data`, `agentic-payments`, `zk-proofs`, `standards`, `deploy-stellar-mainnet`, `find-stellar-idea`, `stellar-competitive-landscape`, `scf-round-watcher`, `stellar-help`, `navigate-skills`. Mapeadas a fases en `guides/skills-externas.md`.
 - **Protocolo general de software** (AEGIS en este ecosistema): `code-review`, `review-edge-case-hunter`, `investigate`, `dev-story`, `create-architecture`, `create-epics-and-stories`, `prd`, `product-brief`, `prfaq`, `brainstorming`, `advanced-elicitation`, `party-mode`, `reprompt` y las personas `elliot-dev`, `tyler-architect`, `justin-analyst`, `nicole-pm`, `bri-tech-writer`.
-- **Protocolo de diseño** (LUMEN): `create-ux-design`, `kaan-ux-designer`.
+- **Protocolo de diseño**: `create-ux-design`, `kaan-ux-designer`.
 - **Excluida**: `remove-ai-marks` (política de trazabilidad: borrar marcas de IA contradice la bitácora honesta de cualquiera de los protocolos).
 
 ## 9. Fuera de alcance de la génesis
