@@ -1,0 +1,60 @@
+name: ci
+
+# La regla 8 de AGENTS.md pide, antes de proponer un commit, `astra check` en verde
+# sobre este repo y `astra skills sync --check` en verde. Hasta ahora eso era prosa:
+# este workflow ejecuta las dos verificaciones en cada push a main y en cada pull
+# request, para que dejen de depender de que alguien las recuerde.
+
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: astra check + skills sync
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      # Dos checkouts hermanos dentro del workspace: la herramienta queda al lado del
+      # protocolo y nunca dentro de su árbol. Así `astra check`, que escanea el
+      # directorio actual, sigue viendo solo los archivos de ASTRA y el .gitignore
+      # no necesita ninguna excepción.
+      - name: Clonar el protocolo
+        uses: actions/checkout@v4
+        with:
+          path: astra
+
+      - name: Clonar astra-cli
+        uses: actions/checkout@v4
+        with:
+          # Repositorio público: alcanza el GITHUB_TOKEN por defecto para clonarlo.
+          repository: orlando-vazquez-career/astra-cli
+          # aegis: pineado a main; fijar a un tag cuando astra-cli publique una versión estable
+          ref: main
+          path: astra-cli
+
+      # astra-cli declara Node >= 20 y no tiene dependencias ni build: no hay
+      # `npm install`, se invoca bin/astra.mjs directamente.
+      - name: Preparar Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Escáner de secretos e higiene del repo. Sale con 1 ante cualquier hallazgo
+      # de severidad error.
+      - name: astra check
+        working-directory: astra
+        run: node ../astra-cli/bin/astra.mjs check
+
+      # Las copias en .claude/skills y .agents/skills son generadas desde skills/.
+      # Con --check no se escribe nada: falla si alguna quedó fuera de sync.
+      - name: astra skills sync --check
+        working-directory: astra
+        run: node ../astra-cli/bin/astra.mjs skills sync --from skills --runtimes claude,codex --check
